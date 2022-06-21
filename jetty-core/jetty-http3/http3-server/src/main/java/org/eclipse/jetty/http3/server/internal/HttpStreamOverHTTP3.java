@@ -211,7 +211,7 @@ public class HttpStreamOverHTTP3 implements HttpStream
 
     private Content.Chunk newChunk(Stream.Data data)
     {
-        return Content.Chunk.from(data.getByteBuffer(), data.isLast(), data::complete);
+        return Content.Chunk.from(data.getByteBuffer(), data.isLast(), data);
     }
 
     @Override

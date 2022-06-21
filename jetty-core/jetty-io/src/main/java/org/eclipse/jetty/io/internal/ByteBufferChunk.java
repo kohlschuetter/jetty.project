@@ -19,6 +19,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.jetty.io.Content;
 import org.eclipse.jetty.util.BufferUtil;
+import org.eclipse.jetty.util.Retainable;
 
 public class ByteBufferChunk implements Content.Chunk
 {
@@ -43,7 +44,8 @@ public class ByteBufferChunk implements Content.Chunk
     private final boolean last;
     private final AtomicReference<Runnable> releaser;
 
-    public ByteBufferChunk(ByteBuffer byteBuffer, boolean last, Runnable releaser)
+    // LUDO: implement this.
+    public ByteBufferChunk(ByteBuffer byteBuffer, boolean last, Retainable retainable)
     {
         this.byteBuffer = Objects.requireNonNull(byteBuffer);
         this.last = last;

@@ -39,6 +39,7 @@ import org.eclipse.jetty.server.HttpStream;
 import org.eclipse.jetty.util.BufferUtil;
 import org.eclipse.jetty.util.Callback;
 import org.eclipse.jetty.util.Promise;
+import org.eclipse.jetty.util.Retainable;
 import org.eclipse.jetty.util.thread.AutoLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -145,7 +146,7 @@ public class HttpStreamOverHTTP2 implements HttpStream, HTTP2Channel.Server
 
             try (AutoLock ignored = lock.lock())
             {
-                _chunk = newChunk(data.frame(), data::complete);
+                _chunk = newChunk(data.frame(), data);
             }
         }
     }
@@ -179,6 +180,7 @@ public class HttpStreamOverHTTP2 implements HttpStream, HTTP2Channel.Server
     @Override
     public Runnable onData(DataFrame frame, Callback callback)
     {
+        // LUDO: remove the onData() mechanism in favor of just the read() mechanism, see HTTP/3.
         Content.Chunk chunk = newChunk(frame, callback::succeeded);
         try (AutoLock ignored = lock.lock())
         {
@@ -218,9 +220,9 @@ public class HttpStreamOverHTTP2 implements HttpStream, HTTP2Channel.Server
         return _httpChannel.onContentAvailable();
     }
 
-    private Content.Chunk newChunk(DataFrame frame, Runnable complete)
+    private Content.Chunk newChunk(DataFrame frame, Retainable retainable)
     {
-        return Content.Chunk.from(frame.getData(), frame.isEndStream(), complete);
+        return Content.Chunk.from(frame.getData(), frame.isEndStream(), retainable);
     }
 
     @Override

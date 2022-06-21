@@ -26,6 +26,7 @@ import org.eclipse.jetty.http2.frames.HeadersFrame;
 import org.eclipse.jetty.http2.frames.StreamFrame;
 import org.eclipse.jetty.util.Attachable;
 import org.eclipse.jetty.util.Callback;
+import org.eclipse.jetty.util.Retainable;
 
 /**
  * <p>The SPI interface for implementing an HTTP/2 stream.</p>
@@ -204,7 +205,9 @@ public interface IStream extends Stream, Attachable, Closeable
         }
     }
 
-    public static final class Data
+    // LUDO: implement this
+    // TODO: make this mechanism the only one to read data, like in HTTP/3
+    public static final class Data implements Retainable
     {
         private final DataFrame frame;
         private final Runnable complete;

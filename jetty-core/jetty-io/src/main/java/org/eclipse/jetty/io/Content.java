@@ -39,6 +39,7 @@ import org.eclipse.jetty.util.FutureCallback;
 import org.eclipse.jetty.util.FuturePromise;
 import org.eclipse.jetty.util.IO;
 import org.eclipse.jetty.util.Promise;
+import org.eclipse.jetty.util.Retainable;
 
 /**
  * <p>Namespace class that contains the definitions of a {@link Source content source},
@@ -426,7 +427,7 @@ public class Content
      * to release the {@code ByteBuffer} back into a pool), or the
      * {@link #release()} method overridden.</p>
      */
-    public interface Chunk
+    public interface Chunk extends Retainable
     {
         /**
          * <p>An empty, non-last, chunk.</p>
@@ -454,12 +455,11 @@ public class Content
          *
          * @param byteBuffer the ByteBuffer with the bytes of this Chunk
          * @param last whether the Chunk is the last one
-         * @param releaser the code to run when this Chunk is released
          * @return a new Chunk
          */
-        public static Chunk from(ByteBuffer byteBuffer, boolean last, Runnable releaser)
+        public static Chunk from(ByteBuffer byteBuffer, boolean last, Retainable retainable)
         {
-            return new ByteBufferChunk(byteBuffer, last, releaser);
+            return new ByteBufferChunk(byteBuffer, last, retainable);
         }
 
         /**
@@ -524,7 +524,14 @@ public class Content
         /**
          * <p>Releases the resources associated to this Chunk.</p>
          */
+        // LUDO: change this to match Retainable.
         public void release();
+
+        // LUDO: implement this.
+        public default Chunk slice(Chunk origin, int position, int limit, boolean last)
+        {
+            return null;
+        }
 
         /**
          * @return the number of bytes remaining in this Chunk

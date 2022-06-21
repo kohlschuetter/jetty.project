@@ -21,6 +21,7 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.io.Content;
@@ -143,7 +144,9 @@ public class PathContentSource implements Content.Source
         if (last)
             IO.close(channel);
 
-        return Content.Chunk.from(byteBuffer, last, () -> release(byteBuffer));
+        // LUDO: here use the logic from Retainable.ReferenceCounter.
+        AtomicInteger references = new AtomicInteger(1);
+        return Content.Chunk.from(byteBuffer, last, );
     }
 
     @Override

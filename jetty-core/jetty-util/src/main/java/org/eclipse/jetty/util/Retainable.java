@@ -13,7 +13,14 @@
 
 package org.eclipse.jetty.util;
 
+// LUDO: javadocs
 public interface Retainable
 {
     public void retain();
+
+    public boolean release();
+
+    // LUDO: move here the retain/release logic currently in RetainableByteBuffer,
+    // so that it can be used e.g. in PathContentSource.read() (see there).
+    // Call the inner class e.g. ReferenceCounter.
 }

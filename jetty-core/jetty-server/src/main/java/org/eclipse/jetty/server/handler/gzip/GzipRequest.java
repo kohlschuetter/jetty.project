@@ -126,7 +126,8 @@ public class GzipRequest extends Request.WrapperProcessor
 
                 ByteBuffer decodedBuffer = _decoder.decode(_chunk);
                 if (BufferUtil.hasContent(decodedBuffer))
-                    return Content.Chunk.from(decodedBuffer, _chunk.isLast() && !_chunk.hasRemaining(), () -> _decoder.release(decodedBuffer));
+                    // LUDO: fix this.
+                    return Content.Chunk.from(decodedBuffer, _chunk.isLast() && !_chunk.hasRemaining(), );
                 return _chunk.isLast() ? Content.Chunk.EOF : null;
             }
             finally
