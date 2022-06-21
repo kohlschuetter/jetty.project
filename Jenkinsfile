@@ -15,8 +15,7 @@ pipeline {
           steps {
             container('jetty-build') {
               timeout( time: 180, unit: 'MINUTES' ) {
-                sh "pip install --user --upgrade launchable~=1.0"
-                sh "ls -lrt /home/jenkins/.local/bin/"
+                sh "ls -lrt /home/jenkins/"
                 sh "/home/jenkins/.local/bin/launchable verify"
                 sh "/home/jenkins/.local/bin/launchable record build --name jdk17-$BUILD_TAG"
                 mavenBuild( "jdk17", "clean install -Perrorprone", "maven3")
@@ -48,8 +47,6 @@ pipeline {
           steps {
             container( 'jetty-build' ) {
               timeout( time: 180, unit: 'MINUTES' ) {
-                sh "pip install --user --upgrade launchable~=1.0"
-                sh "ls  -lrt /home/jenkins/.local/bin/"
                 sh "/home/jenkins/.local/bin/launchable verify"
                 sh "/home/jenkins/.local/bin/launchable record build --name jdk11-$BUILD_TAG"
                 mavenBuild( "jdk11", "clean install -Dspotbugs.skip=true -Djacoco.skip=true", "maven3")
