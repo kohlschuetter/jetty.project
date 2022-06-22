@@ -69,6 +69,7 @@ pipeline {
           steps {
             //container( 'jetty-build' ) {
               timeout( time: 180, unit: 'MINUTES' ) {
+                sh "ls -lrt /home/jenkins/"
                 checkout scm
                 sh "/home/jenkins/.local/bin/launchable verify"
                 sh "/home/jenkins/.local/bin/launchable record build --name jdk11-$BUILD_TAG"
