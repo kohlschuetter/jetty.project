@@ -12,7 +12,7 @@ pipeline {
       parallel {
         stage("Build / Test - JDK17") {
           agent {
-            node { label 'linux' }
+            //node { label 'linux' }
             docker { image 'jettyproject/jetty-build:latest' }
           }
           steps {
@@ -47,7 +47,7 @@ pipeline {
         }
         stage("Build / Test - JDK11") {
           agent {
-            node { label 'linux' }
+            //node { label 'linux' }
             docker { image 'jettyproject/jetty-build:latest' }
           }
           steps {
