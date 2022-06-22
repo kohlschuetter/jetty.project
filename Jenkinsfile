@@ -2,8 +2,8 @@
 
 pipeline {
   agent {
-    node { label 'linux' }
-    //docker { image 'jettyproject/jetty-build:latest' }
+    //node { label 'linux' }
+    docker { image 'jettyproject/jetty-build:latest' }
   }
   // save some io during the build
   options { durabilityHint('PERFORMANCE_OPTIMIZED') }
