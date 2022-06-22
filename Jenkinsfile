@@ -25,7 +25,7 @@ pipeline {
             skipDefaultCheckout()
           }
           steps {
-            container('jetty-build') {
+            //container('jetty-build') {
               timeout( time: 180, unit: 'MINUTES' ) {
                 sh "ls -lrt /home/jenkins/"
                 checkout scm
@@ -52,7 +52,7 @@ pipeline {
                        sourcePattern: '**/src/main/java'
                 recordIssues id: "jdk17", name: "Static Analysis jdk17", aggregatingResults: true, enabledForFailure: true, tools: [mavenConsole(), java(), checkStyle(), errorProne(), spotBugs()]
               }
-            }
+            //}
           }
         }
         stage("Build / Test - JDK11") {
@@ -64,7 +64,7 @@ pipeline {
             skipDefaultCheckout()
           }
           steps {
-            container( 'jetty-build' ) {
+            //container( 'jetty-build' ) {
               timeout( time: 180, unit: 'MINUTES' ) {
                 checkout scm
                 sh "/home/jenkins/.local/bin/launchable verify"
@@ -72,7 +72,7 @@ pipeline {
                 mavenBuild( "jdk11", "clean install -Dspotbugs.skip=true -Djacoco.skip=true", "maven3")
                 recordIssues id: "jdk11", name: "Static Analysis jdk11", aggregatingResults: true, enabledForFailure: true, tools: [mavenConsole(), java(), checkStyle()]
               }
-            }
+            //}
           }
         }
       }
