@@ -15,6 +15,9 @@ pipeline {
   }  
   stages {
     stage("Parallel Stage") {
+      options {
+        skipDefaultCheckout()
+      }
       parallel {
         stage("Build / Test - JDK17") {
           agent {
