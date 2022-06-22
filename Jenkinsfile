@@ -2,11 +2,14 @@
 
 pipeline {
   agent {
-    //node { label 'linux' }
-    docker { image 'jettyproject/jetty-build:latest' }
+    node { label 'linux' }
+    //docker { image 'jettyproject/jetty-build:latest' }
   }
   // save some io during the build
-  options { durabilityHint('PERFORMANCE_OPTIMIZED') }
+  options {
+    durabilityHint('PERFORMANCE_OPTIMIZED')
+    skipDefaultCheckout()
+  }
   environment {
     LAUNCHABLE_TOKEN = credentials('launchable-token')
   }  
@@ -15,13 +18,17 @@ pipeline {
       parallel {
         stage("Build / Test - JDK17") {
           agent {
-            node { label 'linux' }
-            //docker { image 'jettyproject/jetty-build:latest' }
+            //node { label 'linux' }
+            docker { image 'jettyproject/jetty-build:latest' }
+          }
+          options {
+            skipDefaultCheckout()
           }
           steps {
             container('jetty-build') {
               timeout( time: 180, unit: 'MINUTES' ) {
                 sh "ls -lrt /home/jenkins/"
+                checkout scm
                 sh "/home/jenkins/.local/bin/launchable verify"
                 sh "/home/jenkins/.local/bin/launchable record build --name jdk17-$BUILD_TAG"
                 mavenBuild( "jdk17", "clean install -Perrorprone", "maven3")
@@ -50,12 +57,16 @@ pipeline {
         }
         stage("Build / Test - JDK11") {
           agent {
-            node { label 'linux' }
-            //docker { image 'jettyproject/jetty-build:latest' }
+            //node { label 'linux' }
+            docker { image 'jettyproject/jetty-build:latest' }
+          }
+          options {
+            skipDefaultCheckout()
           }
           steps {
             container( 'jetty-build' ) {
               timeout( time: 180, unit: 'MINUTES' ) {
+                checkout scm
                 sh "/home/jenkins/.local/bin/launchable verify"
                 sh "/home/jenkins/.local/bin/launchable record build --name jdk11-$BUILD_TAG"
                 mavenBuild( "jdk11", "clean install -Dspotbugs.skip=true -Djacoco.skip=true", "maven3")
