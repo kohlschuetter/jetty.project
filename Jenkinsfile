@@ -1,7 +1,10 @@
 #!groovy
 
 pipeline {
-  agent any
+  agent {
+    node { label 'linux' }
+    //docker { image 'jettyproject/jetty-build:latest' }
+  }
   // save some io during the build
   options { durabilityHint('PERFORMANCE_OPTIMIZED') }
   environment {
@@ -12,11 +15,11 @@ pipeline {
       parallel {
         stage("Build / Test - JDK17") {
           agent {
-            //node { label 'linux' }
-            docker { image 'jettyproject/jetty-build:latest' }
+            node { label 'linux' }
+            //docker { image 'jettyproject/jetty-build:latest' }
           }
           steps {
-            //container('jetty-build') {
+            container('jetty-build') {
               timeout( time: 180, unit: 'MINUTES' ) {
                 sh "ls -lrt /home/jenkins/"
                 sh "/home/jenkins/.local/bin/launchable verify"
@@ -42,23 +45,23 @@ pipeline {
                        sourcePattern: '**/src/main/java'
                 recordIssues id: "jdk17", name: "Static Analysis jdk17", aggregatingResults: true, enabledForFailure: true, tools: [mavenConsole(), java(), checkStyle(), errorProne(), spotBugs()]
               }
-            //}
+            }
           }
         }
         stage("Build / Test - JDK11") {
           agent {
-            //node { label 'linux' }
-            docker { image 'jettyproject/jetty-build:latest' }
+            node { label 'linux' }
+            //docker { image 'jettyproject/jetty-build:latest' }
           }
           steps {
-            //container( 'jetty-build' ) {
+            container( 'jetty-build' ) {
               timeout( time: 180, unit: 'MINUTES' ) {
                 sh "/home/jenkins/.local/bin/launchable verify"
                 sh "/home/jenkins/.local/bin/launchable record build --name jdk11-$BUILD_TAG"
                 mavenBuild( "jdk11", "clean install -Dspotbugs.skip=true -Djacoco.skip=true", "maven3")
                 recordIssues id: "jdk11", name: "Static Analysis jdk11", aggregatingResults: true, enabledForFailure: true, tools: [mavenConsole(), java(), checkStyle()]
               }
-            //}
+            }
           }
         }
       }
