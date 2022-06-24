@@ -15,20 +15,17 @@ pipeline {
   }  
   stages {
     stage("Parallel Stage") {
-      options {
-        skipDefaultCheckout()
-      }
       parallel {
         stage("Build / Test - JDK17") {
           agent {
-            //node { label 'linux' }
-            docker { image 'jettyproject/jetty-build:latest' }
+            node { label 'linux' }
+            //docker { image 'jettyproject/jetty-build:latest' }
           }
           options {
             skipDefaultCheckout()
           }
           steps {
-            //container('jetty-build') {
+            container('jetty-build') {
               timeout( time: 180, unit: 'MINUTES' ) {
                 sh "ls -lrt /home/jenkins/"
                 checkout scm
