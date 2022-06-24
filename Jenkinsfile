@@ -21,9 +21,6 @@ pipeline {
             node { label 'linux' }
             //docker { image 'jettyproject/jetty-build:latest' }
           }
-          options {
-            skipDefaultCheckout()
-          }
           steps {
             container('jetty-build') {
               timeout( time: 180, unit: 'MINUTES' ) {
@@ -52,19 +49,16 @@ pipeline {
                        sourcePattern: '**/src/main/java'
                 recordIssues id: "jdk17", name: "Static Analysis jdk17", aggregatingResults: true, enabledForFailure: true, tools: [mavenConsole(), java(), checkStyle(), errorProne(), spotBugs()]
               }
-            //}
+            }
           }
         }
         stage("Build / Test - JDK11") {
           agent {
-            //node { label 'linux' }
-            docker { image 'jettyproject/jetty-build:latest' }
-          }
-          options {
-            skipDefaultCheckout()
+            node { label 'linux' }
+            //docker { image 'jettyproject/jetty-build:latest' }
           }
           steps {
-            //container( 'jetty-build' ) {
+            container( 'jetty-build' ) {
               timeout( time: 180, unit: 'MINUTES' ) {
                 sh "ls -lrt /home/jenkins/"
                 checkout scm
@@ -73,7 +67,7 @@ pipeline {
                 mavenBuild( "jdk11", "clean install -Dspotbugs.skip=true -Djacoco.skip=true", "maven3")
                 recordIssues id: "jdk11", name: "Static Analysis jdk11", aggregatingResults: true, enabledForFailure: true, tools: [mavenConsole(), java(), checkStyle()]
               }
-            //}
+            }
           }
         }
       }
