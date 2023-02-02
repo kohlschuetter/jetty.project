@@ -57,9 +57,9 @@ import org.eclipse.jetty.http2.frames.WindowUpdateFrame;
 import org.eclipse.jetty.http2.hpack.HpackException;
 import org.eclipse.jetty.http2.internal.generator.Generator;
 import org.eclipse.jetty.http2.internal.parser.Parser;
+import org.eclipse.jetty.io.ByteBufferPool;
 import org.eclipse.jetty.io.CyclicTimeouts;
 import org.eclipse.jetty.io.EndPoint;
-import org.eclipse.jetty.io.RetainableByteBufferPool;
 import org.eclipse.jetty.io.WriteFlusher;
 import org.eclipse.jetty.util.AtomicBiInteger;
 import org.eclipse.jetty.util.Atomics;
@@ -1206,7 +1206,7 @@ public abstract class HTTP2Session extends ContainerLifeCycle implements Session
         }
 
         @Override
-        protected boolean generate(RetainableByteBufferPool.Accumulator accumulator) throws HpackException
+        protected boolean generate(ByteBufferPool.Accumulator accumulator) throws HpackException
         {
             frameBytes = generator.control(accumulator, frame);
             beforeSend();
@@ -1320,7 +1320,7 @@ public abstract class HTTP2Session extends ContainerLifeCycle implements Session
         }
 
         @Override
-        protected boolean generate(RetainableByteBufferPool.Accumulator accumulator)
+        protected boolean generate(ByteBufferPool.Accumulator accumulator)
         {
             int dataRemaining = getDataBytesRemaining();
 
